@@ -40,12 +40,18 @@ export default function JoinByCodePage() {
         <p className="text-[var(--gold)]">Redirecting to table…</p>
       )}
       {status === 'notfound' && (
-        <>
-          <p className="text-red-400 mb-4">Table not found for code: {code}</p>
-          <Link href="/lobby" className="text-[var(--gold)] underline">
-            Go to Lobby
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-[var(--gold)] mb-2">Table not found</h1>
+          <p className="text-[var(--text-dim)] mb-6">
+            Invite code &quot;{code}&quot; doesn&apos;t match any table.
+          </p>
+          <Link
+            href="/"
+            className="inline-block px-6 py-3 bg-gradient-to-r from-[var(--gold-dim)] to-[var(--gold)] text-black font-bold rounded-xl hover:opacity-90"
+          >
+            ← Back to Home
           </Link>
-        </>
+        </div>
       )}
     </main>
   );

@@ -3,10 +3,12 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { UserButton, useUser } from '@clerk/nextjs';
+import { useAuth } from '@/lib/auth-context';
 import type { PokerTable } from '@/lib/types';
 
 export default function LobbyPage() {
   const { isSignedIn, isLoaded } = useUser();
+  const { user } = useAuth();
   const [tables, setTables] = useState<PokerTable[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -28,13 +30,27 @@ export default function LobbyPage() {
   }, []);
 
   const createTable = async () => {
+    if (!isSignedIn || !user) {
+      window.location.href = '/login?redirect_url=' + encodeURIComponent('/lobby');
+      return;
+    }
     try {
       const res = await fetch('/api/tables', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: 'New Table', maxSeats: 9 }),
+        body: JSON.stringify({
+          name: 'New Table',
+          maxSeats: 9,
+          displayName: user?.displayName || 'Player',
+          emoji: user?.emoji || '♛',
+          chips: user?.chips ?? 1500,
+        }),
       });
       const table = await res.json();
+      if (res.status === 401) {
+        window.location.href = '/login?redirect_url=' + encodeURIComponent('/lobby');
+        return;
+      }
       if (table?.id) window.location.href = `/table/${table.id}`;
     } catch (e) {
       console.error(e);
@@ -69,12 +85,25 @@ export default function LobbyPage() {
         <p className="text-[var(--text-dim)]">Loading tables…</p>
       ) : (
         <>
-          <button
-            onClick={createTable}
-            className="mb-6 px-8 py-4 bg-gradient-to-r from-[var(--gold-dim)] to-[var(--gold)] text-black font-bold rounded-xl hover:scale-105"
-          >
-            + Create Table
-          </button>
+          {isLoaded && (
+            <div className="mb-6">
+              {isSignedIn ? (
+                <button
+                  onClick={createTable}
+                  className="px-8 py-4 bg-gradient-to-r from-[var(--gold-dim)] to-[var(--gold)] text-black font-bold rounded-xl hover:scale-105"
+                >
+                  + Create Table
+                </button>
+              ) : (
+                <Link
+                  href="/login?redirect_url=%2Flobby"
+                  className="inline-block px-8 py-4 bg-gradient-to-r from-[var(--gold-dim)] to-[var(--gold)] text-black font-bold rounded-xl hover:scale-105"
+                >
+                  Sign in to Create Table
+                </Link>
+              )}
+            </div>
+          )}
 
           <div className="grid gap-4">
             {tables.length === 0 ? (

@@ -1,5 +1,7 @@
 # Recommendations & Hardening
 
+See `docs/REQUIREMENTS.md` for table/game flow requirements.
+
 ## Completed
 
 - **Next.js** – Upgraded to 14.2.35 (security patches)
@@ -10,6 +12,7 @@
 - **Audio toggle** – ♪ Sound button in game page wrapper + cassior’s built-in toggle
 - SFX audio, your-turn ping, Play button for seated users
 - **Accessibility** – Login/sign-in/sign-up use OS light/dark theme with WCAG AA contrast; see `docs/ACCESSIBILITY.md`
+- **Table flow** – Create requires login; table page shows game; seed on empty; Sit at Table with login redirect; 404 for missing tables
 
 ## Optional follow-ups
 

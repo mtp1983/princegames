@@ -14,7 +14,7 @@ export default function HomePage() {
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
-            href="/lobby"
+            href="/join"
             className="inline-block px-16 py-5 text-xl font-bold text-black bg-gradient-to-r from-[#8a6820] via-[var(--gold)] to-[#e8c76b] rounded-xl shadow-[0_0_40px_rgba(201,168,76,0.5)] hover:scale-105 hover:shadow-[0_0_70px_rgba(201,168,76,0.8)] transition-all"
           >
             ♠ Join a Table Now ♠

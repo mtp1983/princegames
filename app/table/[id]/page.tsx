@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import type { PokerTable } from '@/lib/types';
 import { useAuth } from '@/lib/auth-context';
+import { SitAtTableOverlay } from '@/components/SitAtTableOverlay';
 import { ShareTableLink } from '@/components/ShareTableLink';
-import { JoinTablePrompt } from '@/components/JoinTablePrompt';
 
 export default function TablePage() {
   const params = useParams();
@@ -14,6 +14,8 @@ export default function TablePage() {
   const { user } = useAuth();
   const [table, setTable] = useState<PokerTable | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showShare, setShowShare] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const isSeated = user && table?.seats?.some((s) => s.status === 'human' && s.playerId === user.id);
 
@@ -39,74 +41,73 @@ export default function TablePage() {
     return () => clearInterval(interval);
   }, [id]);
 
-  if (loading || !table) {
+  const toggleSound = () => {
+    iframeRef.current?.contentWindow?.postMessage('toggleSound', '*');
+  };
+
+  if (loading) {
     return (
-      <main className="min-h-screen flex items-center justify-center">
-        <p className="text-[var(--text-dim)]">
-          {loading ? 'Loading…' : 'Table not found'}
+      <main className="min-h-screen flex items-center justify-center bg-[var(--bg)]">
+        <p className="text-[var(--text-dim)]">Loading game…</p>
+      </main>
+    );
+  }
+
+  if (!table) {
+    return (
+      <main className="min-h-screen flex flex-col items-center justify-center p-6 bg-[var(--bg)]">
+        <h1 className="text-2xl font-bold text-[var(--gold)] mb-2">Table not found</h1>
+        <p className="text-[var(--text-dim)] mb-6">
+          This table may have been removed or the link is incorrect.
         </p>
+        <Link
+          href="/"
+          className="px-6 py-3 bg-gradient-to-r from-[var(--gold-dim)] to-[var(--gold)] text-black font-bold rounded-xl hover:opacity-90"
+        >
+          ← Back to Home
+        </Link>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen p-6">
-      <header className="flex justify-between items-center mb-6">
-        <Link href="/lobby" className="font-cinzel-deco text-xl text-[var(--gold)]">
-          ← Lobby
-        </Link>
-        <span className="text-sm text-[var(--text-dim)]">Table: {table.name}</span>
-      </header>
-
-      <h1 className="text-2xl font-bold text-[var(--gold)] mb-6">{table.name}</h1>
-
-      {/* Prominent share link — top of page */}
-      <ShareTableLink
-        tableId={table.id}
-        inviteCode={table.inviteCode}
-        className="mb-8"
+    <main className="min-h-screen flex flex-col relative">
+      <iframe
+        ref={iframeRef}
+        src="/cassior.html"
+        className="w-full h-screen border-0 absolute inset-0"
+        title="Poker Game"
       />
-
-      {/* Play button when seated */}
-      {isSeated && (
+      <div className="absolute top-4 left-4 z-[200] flex gap-4">
         <Link
-          href={`/game?tableId=${table.id}`}
-          className="inline-block mb-8 px-16 py-5 text-xl font-bold text-black bg-gradient-to-r from-[#8a6820] via-[var(--gold)] to-[#e8c76b] rounded-xl shadow-[0_0_40px_rgba(201,168,76,0.5)] hover:scale-105 hover:shadow-[0_0_70px_rgba(201,168,76,0.8)] transition-all"
+          href="/"
+          className="px-4 py-2 bg-black/80 border border-[var(--gold)] rounded-lg text-[var(--gold)] text-sm hover:bg-[var(--gold)] hover:text-black"
         >
-          ♠ Play ♠
+          ← Home
         </Link>
-      )}
-
-      {/* Table seats */}
-      <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-4 mb-8">
-        {table.seats.map((seat) => (
-          <div
-            key={seat.seatIndex}
-            className={`p-4 rounded-xl border text-center ${
-              seat.status === 'empty'
-                ? 'border-dashed border-[var(--text-dim)]/50 text-[var(--text-dim)]'
-                : seat.status === 'npc'
-                  ? 'border-[var(--text-dim)]/40 bg-black/30'
-                  : 'border-[var(--gold)] bg-[var(--gold)]/10'
-            }`}
+        <button
+          type="button"
+          onClick={toggleSound}
+          className="px-4 py-2 bg-black/80 border border-[var(--gold)] rounded-lg text-[var(--gold)] text-sm hover:bg-[var(--gold)] hover:text-black"
+        >
+          ♪ Sound
+        </button>
+        {isSeated && (
+          <button
+            type="button"
+            onClick={() => setShowShare((s) => !s)}
+            className="px-4 py-2 bg-black/80 border border-[var(--gold)] rounded-lg text-[var(--gold)] text-sm hover:bg-[var(--gold)] hover:text-black"
           >
-            {seat.status === 'empty' ? (
-              <span className="text-sm">Empty seat</span>
-            ) : (
-              <>
-                <div className="text-3xl mb-2">{seat.emoji}</div>
-                <div className="font-bold text-sm truncate">{seat.displayName}</div>
-                <div className="text-xs text-[var(--text-dim)]">
-                  {seat.status === 'npc' ? 'NPC' : 'Player'} · ${seat.chips}
-                </div>
-              </>
-            )}
-          </div>
-        ))}
+            🔗 Share
+          </button>
+        )}
       </div>
-
-      {/* Join prompt when logged in (fixed at bottom) */}
-      <JoinTablePrompt table={table} />
+      {showShare && isSeated && (
+        <div className="absolute top-16 left-4 z-[200]">
+          <ShareTableLink tableId={table.id} inviteCode={table.inviteCode} />
+        </div>
+      )}
+      <SitAtTableOverlay table={table} />
     </main>
   );
 }

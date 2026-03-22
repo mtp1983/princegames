@@ -2,12 +2,17 @@
 
 import { SignIn } from '@clerk/nextjs';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function LoginPage() {
+function LoginContent() {
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get('redirect_url') || '/lobby';
+
   return (
     <main className="min-h-screen flex flex-col items-center justify-center p-4 bg-[var(--bg)]">
       <SignIn
-        forceRedirectUrl="/lobby"
+        forceRedirectUrl={redirect}
         signUpUrl="/sign-up"
         appearance={{
           elements: {
@@ -23,5 +28,13 @@ export default function LoginPage() {
         Back
       </Link>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<main className="min-h-screen flex items-center justify-center bg-[var(--bg)]"><p className="text-[var(--text-dim)]">Loading…</p></main>}>
+      <LoginContent />
+    </Suspense>
   );
 }
