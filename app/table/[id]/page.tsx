@@ -15,9 +15,11 @@ export default function TablePage() {
   const [table, setTable] = useState<PokerTable | null>(null);
   const [loading, setLoading] = useState(true);
   const [showShare, setShowShare] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const isSeated = user && table?.seats?.some((s) => s.status === 'human' && s.playerId === user.id);
+  const activeCount = table?.seats?.filter((s) => s.status !== 'empty').length ?? 0;
 
   useEffect(() => {
     if (!id) return;
@@ -39,7 +41,19 @@ export default function TablePage() {
     load();
     const interval = setInterval(load, 2000);
     return () => clearInterval(interval);
-  }, [id]);
+  }, [id, refreshKey]);
+
+  useEffect(() => {
+    const handler = (e: MessageEvent) => {
+      if (e.data?.type === 'turnTimeout' && user && isSeated) {
+        fetch(`/api/tables/${id}/leave`, { method: 'POST' })
+          .then((res) => res.ok && setRefreshKey((k) => k + 1))
+          .catch(() => {});
+      }
+    };
+    window.addEventListener('message', handler);
+    return () => window.removeEventListener('message', handler);
+  }, [id, user, isSeated]);
 
   const toggleSound = () => {
     iframeRef.current?.contentWindow?.postMessage('toggleSound', '*');
@@ -74,7 +88,7 @@ export default function TablePage() {
     <main className="min-h-screen flex flex-col relative">
       <iframe
         ref={iframeRef}
-        src="/cassior.html"
+        src={`/cassior.html?active=${activeCount || 9}`}
         className="w-full h-screen border-0 absolute inset-0"
         title="Poker Game"
       />
@@ -85,6 +99,9 @@ export default function TablePage() {
         >
           ← Home
         </Link>
+        <span className="px-4 py-2 bg-black/80 border border-[var(--gold)] rounded-lg text-[var(--gold)] text-sm">
+          {activeCount} active
+        </span>
         <button
           type="button"
           onClick={toggleSound}

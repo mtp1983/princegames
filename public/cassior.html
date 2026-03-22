@@ -242,7 +242,7 @@ canvas{display:block;}
 <div id="start">
   <div class="crown">♛</div>
   <h1>CASSIOR</h1>
-  <div class="kingline">King of Poker · 9 Players · 3D Hold'em</div>
+  <div class="kingline" id="kingline">King of Poker · 9 Players · 3D Hold'em</div>
   <div class="prev-grid" id="pgrid"><div class="prev-card" style="border-color:rgba(201,168,76,.7)">
   <span class="av">♛</span><div class="pn" style="font-size:11px">You</div>
   <div class="pt">The King</div></div><div class="prev-card"><span class="av">🐍</span>
@@ -309,6 +309,12 @@ canvas{display:block;}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 'use strict';
+(()=>{
+  const p=new URLSearchParams(location.search);
+  const n=p.get('active');
+  const el=document.getElementById('kingline');
+  if(el&&n)el.textContent='King of Poker · '+n+' active · 3D Hold\'em';
+})();
 
 /* ══════════════════════════════════════════════
    PLAYERS — Cassior + 8 opponents
@@ -941,7 +947,10 @@ function waitHuman(p){
     const mn=Math.max(BB*2,toCall+BB);
     sl.min=mn;sl.max=Math.max(mn,p.chips);sl.value=Math.min(mn*2,p.chips);
     updSlider(sl.value);
-    startTimer(28,()=>act('fold'));
+    startTimer(28,()=>{
+      act('fold');
+      if(window.parent!==window)window.parent.postMessage({type:'turnTimeout'},'*');
+    });
   });
 }
 

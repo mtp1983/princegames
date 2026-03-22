@@ -186,6 +186,24 @@ export async function joinTable(
   return seatIdx;
 }
 
+export async function leaveTable(tableId: string, userId: string): Promise<boolean> {
+  const table = await getTable(tableId);
+  if (!table) return false;
+  const idx = table.seats.findIndex((s) => s.playerId === userId && s.status === 'human');
+  if (idx < 0) return false;
+  const newSeats = [...table.seats];
+  newSeats[idx] = {
+    seatIndex: idx,
+    status: 'empty',
+    playerId: null,
+    displayName: '',
+    emoji: '',
+    chips: 0,
+  };
+  await getDb().update(tablesSchema).set({ seats: newSeats }).where(eq(tablesSchema.id, tableId));
+  return true;
+}
+
 export async function seedTableWithNpcs(tableId: string, count: number): Promise<void> {
   let table = await getTable(tableId);
   if (!table) return;

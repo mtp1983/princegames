@@ -44,3 +44,8 @@ export async function seedTableWithNpcs(tableId: string, count: number): Promise
   if (useDb()) return dbStore.seedTableWithNpcs(tableId, count);
   tableStore.seedTableWithNpcs(tableId, count);
 }
+
+export async function leaveTable(tableId: string, userId: string): Promise<boolean> {
+  if (useDb()) return dbStore.leaveTable(tableId, userId);
+  return tableStore.leaveTable(tableId, userId);
+}

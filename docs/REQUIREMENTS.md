@@ -21,3 +21,7 @@
    - When logged in, joins and seats the user
 
 8. **404 handling** – Missing tables and unknown routes show a clear 404 with a "Back to Home" link.
+
+9. **Active player count** – Home page and table page show actual active players (human + NPC) from table status, not a fixed "9 Players".
+
+10. **Turn timeout** – If a seated user doesn't respond in time (timer expires), they fold the round, are removed from the table, and no longer appear active.

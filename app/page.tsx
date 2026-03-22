@@ -1,6 +1,31 @@
+'use client';
+
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+
+function countActive(tables: Array<{ seats?: Array<{ status: string }> }>): number {
+  if (!Array.isArray(tables)) return 0;
+  return tables.reduce((sum, t) => {
+    const active = t.seats?.filter((s) => s.status === 'human' || s.status === 'npc').length ?? 0;
+    return sum + active;
+  }, 0);
+}
 
 export default function HomePage() {
+  const [activeCount, setActiveCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch('/api/tables')
+      .then((res) => res.json())
+      .then((tables) => setActiveCount(countActive(tables)))
+      .catch(() => setActiveCount(0));
+  }, []);
+
+  const subtitle =
+    activeCount !== null
+      ? `King of Poker · ${activeCount} active · 3D Hold'em`
+      : "King of Poker · 9 Players · 3D Hold'em";
+
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#0a1a22] to-black">
       <div className="text-center px-4">
@@ -9,7 +34,7 @@ export default function HomePage() {
           PRINCE CASINO
         </h1>
         <p className="text-[var(--text-dim)] text-sm tracking-[0.3em] uppercase mb-12">
-          King of Poker · 9 Players · 3D Hold&apos;em
+          {subtitle}
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
