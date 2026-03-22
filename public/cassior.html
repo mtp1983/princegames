@@ -377,6 +377,7 @@ const sChip =()=>{osc(860,'triangle',.08,.22);osc(1300,'sine',.06,.1,.04);};
 const sFold =()=>{osc(220,'sawtooth',.2,.18);osc(150,'sawtooth',.18,.1,.18);};
 const sCheck=()=>osc(600,'triangle',.09,.1);
 const sWin  =()=>[523,659,784,1047,1319].forEach((f,i)=>osc(f,'sine',.5,.18,i*.11));
+const sYourTurn=()=>{osc(880,'sine',.12,.2);osc(1175,'sine',.14,.15,.04);};
 
 function startMusic(){
   const CHORDS=[
@@ -919,6 +920,7 @@ async function bettingRound(isPreflop){
 function waitHuman(p){
   return new Promise(res=>{
     resolveHuman=res;
+    sYourTurn();
     const toCall=Math.max(0,curBet-p.bet);
     document.getElementById('action-bar').style.display='flex';
     const bc=document.getElementById('bcall');

@@ -4,14 +4,18 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import type { PokerTable } from '@/lib/types';
+import { useAuth } from '@/lib/auth-context';
 import { ShareTableLink } from '@/components/ShareTableLink';
 import { JoinTablePrompt } from '@/components/JoinTablePrompt';
 
 export default function TablePage() {
   const params = useParams();
   const id = params.id as string;
+  const { user } = useAuth();
   const [table, setTable] = useState<PokerTable | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const isSeated = user && table?.seats?.some((s) => s.status === 'human' && s.playerId === user.id);
 
   useEffect(() => {
     if (!id) return;
@@ -62,6 +66,16 @@ export default function TablePage() {
         inviteCode={table.inviteCode}
         className="mb-8"
       />
+
+      {/* Play button when seated */}
+      {isSeated && (
+        <Link
+          href={`/game?tableId=${table.id}`}
+          className="inline-block mb-8 px-16 py-5 text-xl font-bold text-black bg-gradient-to-r from-[#8a6820] via-[var(--gold)] to-[#e8c76b] rounded-xl shadow-[0_0_40px_rgba(201,168,76,0.5)] hover:scale-105 hover:shadow-[0_0_70px_rgba(201,168,76,0.8)] transition-all"
+        >
+          ♠ Play ♠
+        </Link>
+      )}
 
       {/* Table seats */}
       <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-4 mb-8">
