@@ -1,0 +1,14 @@
+---
+description: Auto-commit and push after completing code changes
+alwaysApply: true
+---
+
+# Auto-Commit & Push
+
+After completing code changes to this project, automatically:
+
+1. Stage all changes: `git add -A`
+2. Commit with a clear message describing the changes
+3. Push to origin: `git push`
+
+Do not commit if the user explicitly asked not to, or if changes were exploratory/reverted.
