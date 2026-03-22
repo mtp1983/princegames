@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cinzel+Decorative:wght@400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --gold: #c9a84c;
+  --gold-dim: #8a6820;
+  --dark: #020608;
+  --dark2: #0a1a22;
+  --text: #e0e8f0;
+  --text-dim: #8899aa;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--dark);
+  color: var(--text);
+  font-family: 'Cinzel', Georgia, serif;
+  min-height: 100vh;
+}
