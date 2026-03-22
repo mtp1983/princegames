@@ -74,12 +74,20 @@ export default function TablePage() {
         <p className="text-[var(--text-dim)] mb-6">
           This table may have been removed or the link is incorrect.
         </p>
-        <Link
-          href="/"
-          className="px-6 py-3 bg-gradient-to-r from-[var(--gold-dim)] to-[var(--gold)] text-black font-bold rounded-xl hover:opacity-90"
-        >
-          ← Back to Home
-        </Link>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <Link
+            href="/join"
+            className="px-6 py-3 bg-gradient-to-r from-[var(--gold-dim)] to-[var(--gold)] text-black font-bold rounded-xl hover:opacity-90 text-center"
+          >
+            Find a Table
+          </Link>
+          <Link
+            href="/"
+            className="px-6 py-3 border-2 border-[var(--gold)] text-[var(--gold)] font-bold rounded-xl hover:bg-[var(--gold)] hover:text-black text-center"
+          >
+            ← Home
+          </Link>
+        </div>
       </main>
     );
   }
