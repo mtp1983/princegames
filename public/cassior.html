@@ -917,10 +917,19 @@ async function bettingRound(isPreflop){
 /* ══════════════════════════════════════════════
    HUMAN INPUT
 ══════════════════════════════════════════════ */
+function notifyYourTurn(){
+  if(!document.hidden||!('Notification' in window))return;
+  if(Notification.permission==='granted'){
+    new Notification('Your turn! — Cassior',{body:'Action required.',icon:'/favicon.ico'});
+  }else if(Notification.permission!=='denied'){
+    Notification.requestPermission().then(p=>{if(p==='granted')new Notification('Your turn! — Cassior',{body:'Action required.'});});
+  }
+}
 function waitHuman(p){
   return new Promise(res=>{
     resolveHuman=res;
     sYourTurn();
+    if(document.hidden)notifyYourTurn();
     const toCall=Math.max(0,curBet-p.bet);
     document.getElementById('action-bar').style.display='flex';
     const bc=document.getElementById('bcall');
@@ -1109,6 +1118,7 @@ function startGame(){
   log('The King takes his throne...');
   playHand();
 }
+window.addEventListener('message',e=>{if(e.data==='toggleSound')toggleSnd();});
 </script>
 
 

@@ -1,14 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { tableStore } from '@/lib/table-store';
+import { getTable, joinTable } from '@/lib/table-store-router';
+import { rateLimit, getClientKey } from '@/lib/rate-limit';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const table = tableStore.getTable(id);
+  const table = await getTable(id);
   if (!table) {
     return NextResponse.json({ error: 'Table not found' }, { status: 404 });
+  }
+
+  const rl = rateLimit(getClientKey(request));
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: 'Too many requests' },
+      { status: 429, headers: { 'Retry-After': String(rl.retryAfter ?? 60) } }
+    );
   }
 
   try {
@@ -19,7 +28,7 @@ export async function POST(
     const chips = parseInt(body?.chips, 10) || 1500;
     const preferredSeat = body?.preferredSeat;
 
-    const seatIdx = tableStore.joinTable(id, {
+    const seatIdx = await joinTable(id, {
       id: userId,
       displayName,
       emoji,
@@ -30,7 +39,8 @@ export async function POST(
       return NextResponse.json({ error: 'Could not join table' }, { status: 400 });
     }
 
-    return NextResponse.json({ seatIndex: seatIdx, table });
+    const updated = await getTable(id);
+    return NextResponse.json({ seatIndex: seatIdx, table: updated ?? table });
   } catch {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }

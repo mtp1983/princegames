@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { tableStore } from '@/lib/table-store';
+import { getTableByInviteCode } from '@/lib/table-store-router';
 
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ code: string }> }
 ) {
   const { code } = await params;
-  const table = tableStore.getTableByInviteCode(code);
+  const table = await getTableByInviteCode(code);
   if (!table) {
     return NextResponse.json({ error: 'Table not found' }, { status: 404 });
   }
