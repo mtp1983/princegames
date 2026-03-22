@@ -14,7 +14,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      appearance={{
+        variables: {
+          colorPrimary: '#c9a84c',
+          colorForeground: 'var(--clerk-fg)',
+          colorMutedForeground: 'var(--clerk-fg-muted)',
+          colorBackground: 'var(--clerk-bg-card)',
+          colorInput: 'var(--clerk-input-bg)',
+          colorInputForeground: 'var(--clerk-input-fg)',
+          colorBorder: 'var(--clerk-border)',
+          colorPrimaryForeground: '#0f172a',
+        },
+      }}
+    >
       <html lang="en">
         <body className="antialiased">
           <AuthProvider>{children}</AuthProvider>

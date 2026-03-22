@@ -9,6 +9,7 @@
 - **Browser notifications** – “Your turn!” when tab is backgrounded (after permission)
 - **Audio toggle** – ♪ Sound button in game page wrapper + cassior’s built-in toggle
 - SFX audio, your-turn ping, Play button for seated users
+- **Accessibility** – Login/sign-in/sign-up use OS light/dark theme with WCAG AA contrast; see `docs/ACCESSIBILITY.md`
 
 ## Optional follow-ups
 

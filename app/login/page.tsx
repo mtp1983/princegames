@@ -5,19 +5,21 @@ import Link from 'next/link';
 
 export default function LoginPage() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center p-4">
+    <main className="min-h-screen flex flex-col items-center justify-center p-4 bg-[var(--bg)]">
       <SignIn
         forceRedirectUrl="/lobby"
         signUpUrl="/sign-up"
         appearance={{
-          variables: { colorPrimary: '#c9a84c' },
           elements: {
             rootBox: 'mx-auto',
-            card: 'bg-black/80 border border-[var(--gold)]',
+            card: 'border border-[var(--clerk-border)] shadow-lg',
           },
         }}
       />
-      <Link href="/" className="mt-6 text-sm text-[var(--text-dim)] hover:text-[var(--gold)]">
+      <Link
+        href="/"
+        className="mt-6 text-sm text-[var(--text-dim)] hover:text-[var(--gold)] focus:outline-none focus:ring-2 focus:ring-[var(--gold)] focus:ring-offset-2 focus:ring-offset-[var(--bg)] rounded"
+      >
         Back
       </Link>
     </main>

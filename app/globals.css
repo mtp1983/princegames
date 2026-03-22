@@ -4,13 +4,43 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Light mode (default) — WCAG AA compliant contrast */
 :root {
   --gold: #c9a84c;
   --gold-dim: #8a6820;
   --dark: #020608;
   --dark2: #0a1a22;
-  --text: #e0e8f0;
-  --text-dim: #8899aa;
+  --text: #0f172a;
+  --text-dim: #475569;
+  --bg: #ffffff;
+  --bg-card: #f8fafc;
+  --border: #e2e8f0;
+  /* Clerk auth components */
+  --clerk-fg: #0f172a;
+  --clerk-fg-muted: #64748b;
+  --clerk-bg: #ffffff;
+  --clerk-bg-card: #f8fafc;
+  --clerk-input-bg: #ffffff;
+  --clerk-input-fg: #0f172a;
+  --clerk-border: #e2e8f0;
+}
+
+/* Dark mode — respects prefers-color-scheme */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #e2e8f0;
+    --text-dim: #94a3b8;
+    --bg: #020608;
+    --bg-card: #0f172a;
+    --border: #334155;
+    --clerk-fg: #e2e8f0;
+    --clerk-fg-muted: #94a3b8;
+    --clerk-bg: #0f172a;
+    --clerk-bg-card: #1e293b;
+    --clerk-input-bg: #1e293b;
+    --clerk-input-fg: #f1f5f9;
+    --clerk-border: #334155;
+  }
 }
 
 * {
@@ -20,7 +50,7 @@
 }
 
 body {
-  background: var(--dark);
+  background: var(--bg);
   color: var(--text);
   font-family: 'Cinzel', Georgia, serif;
   min-height: 100vh;

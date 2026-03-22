@@ -2,15 +2,14 @@ import { SignUp } from '@clerk/nextjs';
 
 export default function SignUpPage() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center p-4">
+    <main className="min-h-screen flex flex-col items-center justify-center p-4 bg-[var(--bg)]">
       <SignUp
         forceRedirectUrl="/lobby"
         signInUrl="/login"
         appearance={{
-          variables: { colorPrimary: '#c9a84c' },
           elements: {
             rootBox: 'mx-auto',
-            card: 'bg-black/80 border border-[var(--gold)]',
+            card: 'border border-[var(--clerk-border)] shadow-lg',
           },
         }}
       />
