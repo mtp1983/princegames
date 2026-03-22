@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import type { PokerTable } from '@/lib/types';
 import { useAuth } from '@/lib/auth-context';
 import { SitAtTableOverlay } from '@/components/SitAtTableOverlay';
 import { ShareTableLink } from '@/components/ShareTableLink';
+import { GameView } from '@/components/game/GameView';
 
 export default function TablePage() {
   const params = useParams();
@@ -16,7 +17,6 @@ export default function TablePage() {
   const [loading, setLoading] = useState(true);
   const [showShare, setShowShare] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const isSeated = user && table?.seats?.some((s) => s.status === 'human' && s.playerId === user.id);
   const activeCount = table?.seats?.filter((s) => s.status !== 'empty').length ?? 0;
@@ -55,10 +55,6 @@ export default function TablePage() {
     return () => window.removeEventListener('message', handler);
   }, [id, user, isSeated]);
 
-  const toggleSound = () => {
-    iframeRef.current?.contentWindow?.postMessage('toggleSound', '*');
-  };
-
   if (loading) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-[var(--bg)]">
@@ -94,12 +90,9 @@ export default function TablePage() {
 
   return (
     <main className="min-h-screen flex flex-col relative">
-      <iframe
-        ref={iframeRef}
-        src={`/cassior.html?active=${activeCount || 9}`}
-        className="w-full h-screen border-0 absolute inset-0"
-        title="Poker Game"
-      />
+      <div className="w-full h-screen absolute inset-0">
+        <GameView activeCount={activeCount || 9} tableId={id} />
+      </div>
       <div className="absolute top-4 left-4 z-[200] flex gap-4">
         <Link
           href="/"
@@ -110,13 +103,6 @@ export default function TablePage() {
         <span className="px-4 py-2 bg-black/80 border border-[var(--gold)] rounded-lg text-[var(--gold)] text-sm">
           {activeCount} active
         </span>
-        <button
-          type="button"
-          onClick={toggleSound}
-          className="px-4 py-2 bg-black/80 border border-[var(--gold)] rounded-lg text-[var(--gold)] text-sm hover:bg-[var(--gold)] hover:text-black"
-        >
-          ♪ Sound
-        </button>
         {isSeated && (
           <button
             type="button"

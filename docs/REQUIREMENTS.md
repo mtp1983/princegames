@@ -6,7 +6,7 @@
 
 2. **Tables viewable anonymously** – Anyone can view a table (and the game) without signing in.
 
-3. **Table page shows game at all times** – Visiting `/table/[id]` shows the interactive poker game (cassior) full screen. No separate lobby view on the table page.
+3. **Table page shows game at all times** – Visiting `/table/[id]` shows the interactive poker game full screen. No separate lobby view on the table page.
 
 4. **Server seeds one table on startup** – When no tables exist, the first `GET /api/tables` creates and seeds a "Main Table" so there is always at least one playable table.
 
